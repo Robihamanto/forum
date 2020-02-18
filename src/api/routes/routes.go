@@ -10,5 +10,7 @@ import (
 func NewRouter() *mux.Router {
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/users", handlers.PostUser).Methods("POST")
+	r.HandleFunc("/posts", handlers.PostPost).Methods("POST")
+	r.HandleFunc("/feedbacks", handlers.PostFeedback).Methods("POST")
 	return r
 }

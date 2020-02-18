@@ -23,3 +23,9 @@ func PostUser(w http.ResponseWriter, r *http.Request) {
 	}
 	utils.ToJSON(w, "User successfully added", http.StatusCreated)
 }
+
+// GetUsers func to retrieve users data
+func GetUsers(w http.ResponseWriter, r *http.Request) {
+	users := models.GetAll(models.USERS)
+	utils.ToJSON(w, users, http.StatusCreated)
+}

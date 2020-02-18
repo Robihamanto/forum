@@ -16,3 +16,10 @@ type Feedback struct {
 	UpdatedAt time.Time `gorm:"default:current_timestamp()" json:"updated_at"`
 	DeletedAt time.Time `gorm:"default:current_timestamp()" json:"deleted_at"`
 }
+
+//NewFeedback create new feedback or comment
+func NewFeedback(feedback Feedback) error {
+	db := Connect()
+	defer db.Close()
+	return db.Create(&feedback).Error
+}

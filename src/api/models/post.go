@@ -17,3 +17,10 @@ type Post struct {
 	UpdatedAt  time.Time  `gorm:"default:current_timestamp()" json:"updated_at"`
 	DeletedAt  time.Time  `gorm:"default:current_timestamp()" json:"deleted_at"`
 }
+
+//NewPost create new post
+func NewPost(post Post) error {
+	db := Connect()
+	defer db.Close()
+	return db.Create(&post).Error
+}

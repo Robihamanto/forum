@@ -1,10 +1,9 @@
 package api
 
-import (
-	"api/model"
-)
+import "api/models"
 
 // Run database model
 func Run() {
-	model.AutoMigrations()
+	models.AutoMigrations()
+	listen(9000)
 }

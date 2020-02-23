@@ -15,7 +15,7 @@ type Post struct {
 	Feedbacks  []Feedback `gorm:"ForeignKey:PostID" json:"feedbacks"`
 	CreatedAt  time.Time  `gorm:"default:current_timestamp()" json:"created_at"`
 	UpdatedAt  time.Time  `gorm:"default:current_timestamp()" json:"updated_at"`
-	DeletedAt  time.Time  `gorm:"default:current_timestamp()" json:"deleted_at"`
+	DeletedAt  *time.Time `json:"deleted_at"`
 }
 
 //NewPost create new post
@@ -23,4 +23,43 @@ func NewPost(post Post) error {
 	db := Connect()
 	defer db.Close()
 	return db.Create(&post).Error
+}
+
+//UpdatePost updating post
+func UpdatePost(post Post) (int64, error) {
+	db := Connect()
+	defer db.Close()
+	rs := db.Model(&post).Where("id = ? ", post.ID).UpdateColumns(
+		map[string]interface{}{
+			"desciption": post.Desciption,
+			"image_url":  post.ImageURL,
+			"subtitle":   post.Subtitle,
+		},
+	)
+	return rs.RowsAffected, rs.Error
+}
+
+// GetPosts is retrieving all post bt users
+func GetPosts() []Post {
+	db := Connect()
+	defer db.Close()
+	var posts []Post
+	db.Order("id ASC").Find(&posts)
+	for i := range posts {
+		db.Model(&posts[i]).Related(&posts[i].User)
+		posts[i].Feedbacks = GetFeedbacksByPost(posts[i])
+	}
+	return posts
+}
+
+// GetPost get single post
+func GetPost(id uint64) interface{} {
+	db := Connect()
+	defer db.Close()
+	var post Post
+	post.ID = id
+	db.Where("id = ?", id).Find(&post)
+	db.Model(&post).Related(&post.User)
+	post.Feedbacks = GetFeedbacksByPost(post)
+	return post
 }

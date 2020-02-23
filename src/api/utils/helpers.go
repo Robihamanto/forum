@@ -27,3 +27,20 @@ func CheckError(err error) {
 		log.Fatal(err)
 	}
 }
+
+// JSONMessageWriter is creating json for response
+func JSONMessageWriter(message string) map[string]interface{} {
+	json := map[string]interface{}{
+		"message": message,
+	}
+	return json
+}
+
+// JSONWithObjWriter is creating json for response
+func JSONWithObjWriter(message string, objName string, obj interface{}) map[string]interface{} {
+	json := map[string]interface{}{
+		"message": message,
+		objName:   obj,
+	}
+	return json
+}

@@ -15,7 +15,7 @@ type User struct {
 	Feedbacks []Feedback `gorm:"ForeignKey:UserID" json:"feedbacks"`
 	CreatedAt time.Time  `gorm:"default:current_timestamp()" json:"created_at"`
 	UpdatedAt time.Time  `gorm:"default:current_timestamp()" json:"updated_at"`
-	DeletedAt time.Time  `gorm:"default:current_timestamp()" json:"deleted_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
 }
 
 //NewUser create new user
@@ -29,4 +29,17 @@ func NewUser(user User) error {
 	}
 	err = db.Create(&user).Error
 	return err
+}
+
+// UpdateUser update user data
+func UpdateUser(user User) (int64, error) {
+	db := Connect()
+	defer db.Close()
+	rs := db.Model(&user).Where("id = ?", user.ID).UpdateColumns(
+		map[string]interface{}{
+			"username": user.Username,
+			"email":    user.Email,
+		},
+	)
+	return rs.RowsAffected, rs.Error
 }
